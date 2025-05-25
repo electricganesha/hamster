@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🐹 Mooey Maria Hazel 🐹 Monitoring Dashboard
 
-## Getting Started
+This project is a full-stack monitoring dashboard for Mooey Maria Hazel, a very active hamster! It tracks her nightly running activity using a Raspberry Pi and Keyestudio sensors, storing and visualizing the data with a modern Next.js web app.
 
-First, run the development server:
+---
+
+## 🚀 Features
+
+- **Session Tracking:** Records every running session with start/end time, wheel rotations, temperature, humidity, and optional image.
+- **Distance Calculation:** Computes distance based on a configurable wheel diameter (default: 28cm).
+- **Sensor Integration:** Uses a Raspberry Pi with:
+  - Keyestudio KS0020 Hall Effect sensor (for wheel rotations)
+  - Keyestudio DHT22 sensor (for temperature & humidity)
+- **Data Storage:** All data is sent to a PostgreSQL database (via Supabase).
+- **Dashboard:**
+  - Filter by date, distance, temperature, humidity
+  - Aggregates and visualizes sessions by day
+  - Interactive charts for distance, temperature, and humidity trends
+
+---
+
+## 📦 Tech Stack
+
+- **Frontend:** Next.js (App Router), React, TypeScript, Material UI (MUI), MUI X Charts
+- **Backend:** Next.js API routes, Prisma ORM
+- **Database:** PostgreSQL (hosted on Supabase)
+- **Hardware:** Raspberry Pi, Keyestudio KS0020 Hall Effect sensor, Keyestudio DHT22 sensor
+
+---
+
+## 🛠️ Getting Started
+
+1. **Install dependencies:**
+
+```bash
+npm install
+```
+
+2. **Set up environment variables:**
+
+Create a `.env` file with your Supabase/PostgreSQL connection string:
+
+```
+DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<db>
+```
+
+3. **Run database migrations:**
+
+```bash
+npx prisma migrate dev --name init
+```
+
+4. **Start the development server:**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. **Open the dashboard:**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Go to [http://localhost:3000](http://localhost:3000) in your browser.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 📝 Project Motivation
 
-To learn more about Next.js, take a look at the following resources:
+Mooey Maria Hazel was running so much every night that we got curious about how much distance she would actually cover! This project was created to answer that question and to have fun visualizing her activity.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📊 How It Works
 
-## Deploy on Vercel
+- The Raspberry Pi collects data from the wheel (rotations) and the environment (temperature, humidity) using the sensors.
+- Data is sent to the backend and stored in a PostgreSQL database.
+- The Next.js dashboard fetches and visualizes this data, allowing filtering and exploration.
+- Distance is calculated as:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  ```
+  distance = rotations × π × wheel_diameter
+  ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+  (Default wheel diameter: 38cm)
+
+---
+
+## 📁 Project Structure
+
+- `src/app/` - Next.js app directory (pages, API routes, global styles)
+- `src/components/` - React UI components (Dashboard, Filters, AboutModal, etc.)
+- `src/utils/` - Utility functions (distance calculation, etc.)
+- `prisma/` - Prisma schema and migrations
+- `public/images/` - Static assets (e.g., Mooey's photo)
+
+---
+
+## 📜 License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+## 🙏 Acknowledgements
+
+- [Next.js](https://nextjs.org)
+- [Material UI](https://mui.com)
+- [Prisma](https://www.prisma.io/)
+- [Supabase](https://supabase.com/)
+- [Keyestudio Sensors](https://www.keyestudio.com/)
+
+---
+
+Enjoy tracking Mooey's adventures! 🐹
