@@ -23,8 +23,11 @@ export const Filters = ({
   setDateRange,
 }: FiltersProps) => {
   return (
-    <Grid container spacing={8} sx={{ padding: '2px 24px' }}>
-      <Grid>
+    <Grid container spacing={{ xs: 2, sm: 4 }} sx={{ padding: { xs: '2px 4px', sm: '2px 24px' } }}>
+      <Grid
+        spacing={{ xs: 12, sm: 6, md: 3 }}
+        sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+      >
         <Typography gutterBottom>Distance (m)</Typography>
         <Slider
           value={distanceRange}
@@ -35,7 +38,10 @@ export const Filters = ({
           size="small"
         />
       </Grid>
-      <Grid>
+      <Grid
+        spacing={{ xs: 12, sm: 6, md: 3 }}
+        sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+      >
         <Typography gutterBottom>Temperature (°C)</Typography>
         <Slider
           value={tempRange}
@@ -46,7 +52,10 @@ export const Filters = ({
           size="small"
         />
       </Grid>
-      <Grid>
+      <Grid
+        spacing={{ xs: 12, sm: 6, md: 3 }}
+        sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+      >
         <Typography gutterBottom>Humidity (%)</Typography>
         <Slider
           value={humidityRange}
@@ -57,18 +66,27 @@ export const Filters = ({
           size="small"
         />
       </Grid>
-      <Grid>
-        <Typography gutterBottom>Date Range</Typography>
+      <Grid
+        spacing={{ xs: 12, sm: 6, md: 3 }}
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+          alignItems: 'center',
+          gap: 2,
+        }}
+      >
         <DatePicker
           label="Start"
           value={dateRange[0]}
           onChange={(v) => setDateRange([v, dateRange[1]])}
-          sx={{ mr: 1 }}
+          sx={{ width: '100%' }}
         />
         <DatePicker
           label="End"
           value={dateRange[1]}
           onChange={(v) => setDateRange([dateRange[0], v])}
+          sx={{ width: '100%' }}
         />
       </Grid>
     </Grid>

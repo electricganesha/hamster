@@ -96,12 +96,12 @@ export default function HamsterSessionsDashboard() {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <ThemeProvider theme={theme}>
-        <Box p={2} position="relative">
+        <Box p={{ xs: 1, sm: 2 }} position="relative">
           <AboutModal />
-          <Typography variant="h4" gutterBottom>
+          <Typography variant="h4" gutterBottom fontSize={{ xs: 22, sm: 28 }}>
             🐹 Mooey Maria Hazel 🐹 Monitoring Dashboard
           </Typography>
-          <Paper sx={{ p: 2, mb: 2 }}>
+          <Paper sx={{ p: { xs: 1, sm: 2 }, mb: 2 }}>
             <Filters
               distanceRange={distanceRange}
               setDistanceRange={setDistanceRange}
@@ -114,13 +114,17 @@ export default function HamsterSessionsDashboard() {
             />
           </Paper>
           {loading ? (
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight={120}>
               <CircularProgress />
             </Box>
           ) : (
             <>
-              <SessionsTable sessions={filtered} />
-              <ProgressCharts chartData={chartData} />
+              <Box sx={{ width: '100%', overflowX: 'auto' }}>
+                <SessionsTable sessions={filtered} />
+              </Box>
+              <Box sx={{ width: '100%', overflowX: 'auto' }}>
+                <ProgressCharts chartData={chartData} />
+              </Box>
             </>
           )}
         </Box>
