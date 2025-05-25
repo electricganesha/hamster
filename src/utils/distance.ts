@@ -1,5 +1,5 @@
-// Circumference = π × diameter (38cm = 0.38m)
-export const WHEEL_DIAMETER_M = 0.38;
+// Circumference = π × diameter (28 = 0.28m)
+export const WHEEL_DIAMETER_M = 0.28;
 export const WHEEL_CIRCUMFERENCE_M = Math.PI * WHEEL_DIAMETER_M;
 
 /**

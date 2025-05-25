@@ -12,6 +12,7 @@ import { ProgressCharts } from './ProgressCharts';
 import { computeDistance } from '../utils/distance';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../app/theme';
+import { AboutModal } from './AboutModal';
 
 function aggregateSessionsByDay(sessions: any[]): { [day: string]: any[] } {
   const byDay: { [day: string]: any[] } = {};
@@ -95,7 +96,8 @@ export default function HamsterSessionsDashboard() {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <ThemeProvider theme={theme}>
-        <Box p={2}>
+        <Box p={2} position="relative">
+          <AboutModal />
           <Typography variant="h4" gutterBottom>
             🐹 Mooey Maria Hazel 🐹 Monitoring Dashboard
           </Typography>
