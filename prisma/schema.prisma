@@ -15,12 +15,17 @@ datasource db {
 }
 
 model HamsterSession {
-  id           Int      @id @default(autoincrement())
-  startTime    DateTime
-  endTime      DateTime
-  rotations    Int
-  temperature  Float
-  humidity     Float
-  image        String?  // Optional image string (e.g., URL or base64)
-  createdAt    DateTime @default(now())
+  id          Int                @id @default(autoincrement())
+  images      String[]
+  createdAt   DateTime           @default(now())
+  rotationLog RotationLogEntry[]
+}
+
+model RotationLogEntry {
+  id          Int            @id @default(autoincrement())
+  timestamp   Float // Unix timestamp (seconds, can be fractional)
+  temperature Float
+  humidity    Float
+  session     HamsterSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId   Int
 }
