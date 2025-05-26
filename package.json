@@ -16,6 +16,7 @@
     "@mui/material": "^7.1.0",
     "@mui/x-charts": "^8.4.0",
     "@mui/x-date-pickers": "^8.4.0",
+    "@next/third-parties": "^15.4.0-canary.51",
     "@prisma/client": "^6.8.2",
     "date-fns": "^4.1.0",
     "mui": "^0.0.1",

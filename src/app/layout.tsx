@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { Quicksand } from 'next/font/google';
 import './globals.css';
 
@@ -21,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${quicksandSans.variable} ${quicksandSans.variable}`}>{children}</body>
+      <GoogleAnalytics gaId="G-8S60LHFS17" />
     </html>
   );
 }
