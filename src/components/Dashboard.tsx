@@ -4,39 +4,24 @@ import { useState, useEffect, useMemo } from 'react';
 import { Box, Typography, Paper, CircularProgress } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { format, parseISO, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
+import { parseISO, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 
 import { Filters } from './Filters';
 import { SessionsTable } from './SessionsTable';
 import { ProgressCharts } from './ProgressCharts';
-import { computeDistance } from '../utils/distance';
+import {
+  aggregateSessionsByDay,
+  computeDistance,
+  computeSessionDerivedFields,
+} from '../utils/utils';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../app/theme';
 import { AboutModal } from './AboutModal';
+import { AggregatedSession } from '@/app/types/session';
 
-function aggregateSessionsByDay(sessions: any[]): { [day: string]: any[] } {
-  const byDay: { [day: string]: any[] } = {};
-  sessions.forEach((s) => {
-    const day = format(parseISO(s.startTime), 'yyyy-MM-dd');
-    if (!byDay[day]) byDay[day] = [];
-    byDay[day].push(s);
-  });
-  return byDay;
-}
-
-type Session = {
-  id: string | number;
-  startTime: string;
-  endTime: string;
-  rotations: number;
-  temperature: number;
-  humidity: number;
-  image?: string;
-};
-
-export default function HamsterSessionsDashboard() {
+const HamsterSessionsDashboard = () => {
   const today = new Date();
-  const [sessions, setSessions] = useState<Session[]>([]);
+  const [sessions, setSessions] = useState<AggregatedSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [distanceRange, setDistanceRange] = useState<[number, number]>([0, 1000]);
   const [tempRange, setTempRange] = useState<[number, number]>([0, 40]);
@@ -45,14 +30,13 @@ export default function HamsterSessionsDashboard() {
     startOfDay(today),
     endOfDay(today),
   ]);
-  const [search, setSearch] = useState('');
 
   useEffect(() => {
     setLoading(true);
     fetch('/api/hamster-session?page=1&pageSize=1000')
       .then((res) => res.json())
       .then((data) => {
-        setSessions(data);
+        setSessions(data.map(computeSessionDerivedFields));
         setLoading(false);
       });
   }, []);
@@ -72,23 +56,43 @@ export default function HamsterSessionsDashboard() {
         hum <= humidityRange[1] &&
         (!dateRange[0] ||
           !dateRange[1] ||
-          isWithinInterval(date, { start: dateRange[0], end: dateRange[1] })) &&
-        (!search || (s.image && s.image.toLowerCase().includes(search.toLowerCase())))
+          isWithinInterval(date, { start: dateRange[0], end: dateRange[1] }))
       );
     });
-  }, [sessions, distanceRange, tempRange, humidityRange, dateRange, search]);
+  }, [sessions, distanceRange, tempRange, humidityRange, dateRange]);
 
   const byDay = useMemo(() => aggregateSessionsByDay(filtered), [filtered]);
   const chartData = useMemo(() => {
-    const days = Object.keys(byDay).sort();
+    const days = Object.keys(byDay).sort((a, b) => a.localeCompare(b));
     return {
       days,
-      distance: days.map((d) => byDay[d].reduce((sum, s) => sum + computeDistance(s.rotations), 0)),
+      distance: days.map((d) =>
+        byDay[d].reduce((sum: number, s: AggregatedSession) => sum + s.distance, 0),
+      ),
+      rotations: days.map((d) =>
+        byDay[d].reduce((sum: number, s: AggregatedSession) => sum + s.rotations, 0),
+      ),
+      speed: days.map((d) => {
+        const totalDistance = byDay[d].reduce(
+          (sum: number, s: AggregatedSession) => sum + s.distance,
+          0,
+        );
+        const totalDuration = byDay[d].reduce((sum: number, s: AggregatedSession) => {
+          const start = new Date(s.startTime).getTime() / 1000;
+          const end = new Date(s.endTime).getTime() / 1000;
+          return sum + Math.max(0, end - start);
+        }, 0);
+        return totalDuration > 0 ? totalDistance / totalDuration : 0;
+      }),
       avgTemp: days.map(
-        (d) => byDay[d].reduce((sum, s) => sum + s.temperature, 0) / byDay[d].length,
+        (d) =>
+          byDay[d].reduce((sum: number, s: AggregatedSession) => sum + s.temperature, 0) /
+          byDay[d].length,
       ),
       avgHumidity: days.map(
-        (d) => byDay[d].reduce((sum, s) => sum + s.humidity, 0) / byDay[d].length,
+        (d) =>
+          byDay[d].reduce((sum: number, s: AggregatedSession) => sum + s.humidity, 0) /
+          byDay[d].length,
       ),
     };
   }, [byDay]);
@@ -131,4 +135,6 @@ export default function HamsterSessionsDashboard() {
       </ThemeProvider>
     </LocalizationProvider>
   );
-}
+};
+
+export default HamsterSessionsDashboard;

@@ -14,15 +14,17 @@ export const metadata: Metadata = {
   description: "A dashboard for monitoring Mooey Maria Hazel's activity",
 };
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
   return (
     <html lang="en">
       <body className={`${quicksandSans.variable} ${quicksandSans.variable}`}>{children}</body>
       <GoogleAnalytics gaId="G-8S60LHFS17" />
     </html>
   );
-}
+};
+
+export default RootLayout;

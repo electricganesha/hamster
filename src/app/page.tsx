@@ -1,11 +1,13 @@
-"use client";
+'use client';
 
-import dynamic from "next/dynamic";
+import dynamic from 'next/dynamic';
 
-const Dashboard = dynamic(() => import("../components/Dashboard"), {
+const Dashboard = dynamic(() => import('../components/Dashboard'), {
   ssr: false,
 });
 
-export default function Home() {
+const Home = () => {
   return <Dashboard />;
-}
+};
+
+export default Home;

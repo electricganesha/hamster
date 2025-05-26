@@ -1,7 +1,19 @@
 import { Paper, Typography, useTheme, useMediaQuery, Box } from '@mui/material';
 import { LineChart } from '@mui/x-charts/LineChart';
+import { FC } from 'react';
 
-export function ProgressCharts({ chartData }: { chartData: any }) {
+interface ProgressChartsProps {
+  chartData: {
+    distance: number[];
+    rotations: number[];
+    speed: number[];
+    avgTemp: number[];
+    avgHumidity: number[];
+    days: string[];
+  };
+}
+
+export const ProgressCharts: FC<ProgressChartsProps> = ({ chartData }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
@@ -12,6 +24,8 @@ export function ProgressCharts({ chartData }: { chartData: any }) {
           height={300}
           series={[
             { data: chartData.distance, label: 'Distance (m)' },
+            { data: chartData.rotations, label: 'Rotations' },
+            { data: chartData.speed, label: 'Speed (m/s)' },
             { data: chartData.avgTemp, label: 'Avg Temp (°C)' },
             { data: chartData.avgHumidity, label: 'Avg Humidity (%)' },
           ]}
@@ -20,4 +34,4 @@ export function ProgressCharts({ chartData }: { chartData: any }) {
       </Box>
     </Paper>
   );
-}
+};

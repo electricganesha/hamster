@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { Modal, Box, Typography, IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import CloseIcon from '@mui/icons-material/Close';
-import { WHEEL_DIAMETER_M } from '../utils/distance';
+import { WHEEL_DIAMETER_M } from '../utils/utils';
 
 const style = {
   position: 'absolute' as const,
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 540, // increased width
+  width: 540,
   maxWidth: '90vw',
   bgcolor: 'background.paper',
   border: '2px solid #000',
@@ -19,7 +19,7 @@ const style = {
   color: 'text.primary',
 };
 
-export function AboutModal() {
+export const AboutModal = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -88,4 +88,4 @@ export function AboutModal() {
       </Modal>
     </>
   );
-}
+};
