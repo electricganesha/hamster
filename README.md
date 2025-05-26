@@ -6,16 +6,20 @@ This project is a full-stack monitoring dashboard for Mooey Maria Hazel, a very 
 
 ## 🚀 Features
 
-- **Session Tracking:** Records every running session with start/end time, wheel rotations, temperature, humidity, and optional image.
-- **Distance Calculation:** Computes distance based on a configurable wheel diameter (default: 28cm).
+- **Session Tracking:** Records every running session with start/end time, wheel rotations, and per-rotation logs (timestamp, temperature, humidity).
+- **Per-Rotation Logging:** Stores detailed logs for each wheel rotation, including timestamp, temperature, and humidity.
+- **Distance Calculation:** Computes distance run based on a configurable wheel diameter (default: 28cm).
+- **Speed Calculation:** Calculates average speed (meters per second) for each session and aggregates by day.
 - **Sensor Integration:** Uses a Raspberry Pi with:
   - Keyestudio KS0020 Hall Effect sensor (for wheel rotations)
   - Keyestudio DHT22 sensor (for temperature & humidity)
 - **Data Storage:** All data is sent to a PostgreSQL database (via Supabase).
 - **Dashboard:**
-  - Filter by date, distance, temperature, humidity
+  - Filter by date, distance, speed, temperature, humidity
   - Aggregates and visualizes sessions by day
-  - Interactive charts for distance, temperature, and humidity trends
+  - Interactive charts for distance, speed, rotations, temperature, and humidity trends
+  - Responsive table and card views for session data
+- **Image Support:** Optionally attach images to sessions.
 
 ---
 
@@ -71,7 +75,8 @@ Mooey Maria Hazel was running so much every night that we got curious about how 
 ## 📊 How It Works
 
 - The Raspberry Pi collects data from the wheel (rotations) and the environment (temperature, humidity) using the sensors.
-- Data is sent to the backend and stored in a PostgreSQL database.
+- Each rotation is logged with a timestamp, temperature, and humidity, and sent to the backend as a session.
+- Data is stored in a PostgreSQL database.
 - The Next.js dashboard fetches and visualizes this data, allowing filtering and exploration.
 - Distance is calculated as:
 
@@ -79,7 +84,13 @@ Mooey Maria Hazel was running so much every night that we got curious about how 
   distance = rotations × π × wheel_diameter
   ```
 
-  (Default wheel diameter: 38cm)
+  (Default wheel diameter: 28cm)
+
+- Speed is calculated as:
+
+  ```
+  speed = distance / duration (in seconds)
+  ```
 
 ---
 
@@ -87,7 +98,7 @@ Mooey Maria Hazel was running so much every night that we got curious about how 
 
 - `src/app/` - Next.js app directory (pages, API routes, global styles)
 - `src/components/` - React UI components (Dashboard, Filters, AboutModal, etc.)
-- `src/utils/` - Utility functions (distance calculation, etc.)
+- `src/utils/` - Utility functions (distance, speed, session calculations, etc.)
 - `prisma/` - Prisma schema and migrations
 - `public/images/` - Static assets (e.g., Mooey's photo)
 
