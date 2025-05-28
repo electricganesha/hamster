@@ -29,8 +29,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-
-const DAY_COLORS = ['#e3f2fd', '#fce4ec', '#e8f5e9', '#fff3e0', '#f3e5f5', '#f9fbe7', '#ede7f6'];
+import { darkenColor, getDayColor } from '@/utils/color';
 
 export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSession[] }>) => {
   const theme = useTheme();
@@ -54,7 +53,6 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
     ),
   );
   const toggleDay = (day: string) => setExpanded((prev) => ({ ...prev, [day]: !prev[day] }));
-  const getDayColor = (idx: number) => DAY_COLORS[idx % DAY_COLORS.length];
 
   if (!isMobile) {
     return (
@@ -87,89 +85,221 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
               const daySessions = getSortedSessions(byDay[day]);
               const avg = getSessionAverages(daySessions);
               const totalRow = getSessionTotals(daySessions);
-              return [
-                <TableRow key={day + '-header'} sx={{ backgroundColor: getDayColor(idx) }}>
-                  <TableCell colSpan={9} sx={{ p: 0 }}>
-                    <Box display="flex" alignItems="center" sx={{ p: 2 }}>
-                      <IconButton size="small" onClick={() => toggleDay(day)}>
-                        {expanded[day] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                      </IconButton>
-                      <Typography variant="subtitle1" sx={{ ml: 1 }}>
-                        {day}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                </TableRow>,
-                <TableRow key={day + '-collapse'} sx={{ backgroundColor: getDayColor(idx), p: 0 }}>
-                  <TableCell colSpan={9} sx={{ p: 0, border: 0 }}>
-                    <Collapse in={!!expanded[day]} timeout="auto" unmountOnExit>
-                      <Table size="small" sx={{ backgroundColor: getDayColor(idx) }}>
-                        <TableBody>
-                          <TableRow key={day + '-avg'}>
-                            <TableCell colSpan={3} align="right">
-                              <b>Average</b>
-                            </TableCell>
-                            <TableCell>
-                              <b>{avg?.sessionLength.toFixed(1)}</b>
-                            </TableCell>
-                            <TableCell>
-                              <b>{avg?.rotations.toFixed(0)}</b>
-                            </TableCell>
-                            <TableCell>
-                              <b>{avg?.distance.toFixed(2)}</b>
-                            </TableCell>
-                            <TableCell>
-                              <b>{avg?.speed.toFixed(2)}</b>
-                            </TableCell>
-                            <TableCell>
-                              <b>{avg?.temperature.toFixed(1)}</b>
-                            </TableCell>
-                            <TableCell>
-                              <b>{avg?.humidity.toFixed(1)}</b>
-                            </TableCell>
-                          </TableRow>
-                          <TableRow key={day + '-total'}>
-                            <TableCell colSpan={3} align="right">
-                              <b>Total</b>
-                            </TableCell>
-                            <TableCell>
-                              <b>{totalRow?.sessionLength.toFixed(1)}</b>
-                            </TableCell>
-                            <TableCell>
-                              <b>{totalRow?.rotations}</b>
-                            </TableCell>
-                            <TableCell>
-                              <b>{totalRow?.distance.toFixed(2)}</b>
-                            </TableCell>
-                            <TableCell>
-                              <b>-</b>
-                            </TableCell>
-                            <TableCell>
-                              <b>-</b>
-                            </TableCell>
-                            <TableCell>
-                              <b>-</b>
-                            </TableCell>
-                          </TableRow>
-                          {daySessions.map((s) => (
-                            <TableRow key={s.id}>
-                              <TableCell>{formatUtc(s.startTime, 'yyyy-MM-dd')}</TableCell>
-                              <TableCell>{formatUtc(s.startTime, 'HH:mm')}</TableCell>
-                              <TableCell>{formatUtc(s.endTime, 'HH:mm')}</TableCell>
-                              <TableCell>{getSessionLengthMinutes(s).toFixed(1)}</TableCell>
-                              <TableCell>{s.rotations}</TableCell>
-                              <TableCell>{s.distance.toFixed(2)}</TableCell>
-                              <TableCell>{s.speed.toFixed(2)}</TableCell>
-                              <TableCell>{s.temperature.toFixed(1)}</TableCell>
-                              <TableCell>{s.humidity.toFixed(1)}</TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </Collapse>
-                  </TableCell>
-                </TableRow>,
-              ];
+              return (
+                <>
+                  {/* Group header row with always-visible averages */}
+                  <TableRow
+                    key={day + '-header'}
+                    sx={{ backgroundColor: getDayColor(idx), height: 48 }}
+                  >
+                    {/* Date cell: collapse icon and day label */}
+                    <TableCell
+                      align="left"
+                      sx={{
+                        p: '6px 16px',
+                        borderBottom: 0,
+                        fontSize: '0.95rem',
+                        fontWeight: 600,
+                        verticalAlign: 'middle',
+                        minWidth: 120,
+                      }}
+                    >
+                      <Box display="flex" alignItems="center" sx={{ p: 0 }}>
+                        <IconButton
+                          size="small"
+                          onClick={() => toggleDay(day)}
+                          sx={{ ml: -1, mr: 0.5 }}
+                        >
+                          {expanded[day] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                        </IconButton>
+                        <span style={{ fontWeight: 600 }}>{day}</span>
+                      </Box>
+                    </TableCell>
+                    {/* Show averages for each column in the header row, align center, match th style */}
+                    <TableCell
+                      align="center"
+                      sx={{
+                        p: '6px 16px',
+                        fontSize: '0.95rem',
+                        fontWeight: 500,
+                        color: 'text.secondary',
+                        borderBottom: 0,
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      {avg ? formatUtc(daySessions[0]?.startTime, 'HH:mm') : '-'}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{
+                        p: '6px 16px',
+                        fontSize: '0.95rem',
+                        fontWeight: 500,
+                        color: 'text.secondary',
+                        borderBottom: 0,
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      {avg ? formatUtc(daySessions[daySessions.length - 1]?.endTime, 'HH:mm') : '-'}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{
+                        p: '6px 16px',
+                        fontSize: '0.95rem',
+                        fontWeight: 500,
+                        color: 'text.secondary',
+                        borderBottom: 0,
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      {avg ? avg.sessionLength.toFixed(1) : '-'}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{
+                        p: '6px 16px',
+                        fontSize: '0.95rem',
+                        fontWeight: 500,
+                        color: 'text.secondary',
+                        borderBottom: 0,
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      {avg ? avg.rotations.toFixed(0) : '-'}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{
+                        p: '6px 16px',
+                        fontSize: '0.95rem',
+                        fontWeight: 500,
+                        color: 'text.secondary',
+                        borderBottom: 0,
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      {avg ? avg.distance.toFixed(2) : '-'}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{
+                        p: '6px 16px',
+                        fontSize: '0.95rem',
+                        fontWeight: 500,
+                        color: 'text.secondary',
+                        borderBottom: 0,
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      {avg ? avg.speed.toFixed(2) : '-'}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{
+                        p: '6px 16px',
+                        fontSize: '0.95rem',
+                        fontWeight: 500,
+                        color: 'text.secondary',
+                        borderBottom: 0,
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      {avg ? avg.temperature.toFixed(1) : '-'}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{
+                        p: '6px 16px',
+                        fontSize: '0.95rem',
+                        fontWeight: 500,
+                        color: 'text.secondary',
+                        borderBottom: 0,
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      {avg ? avg.humidity.toFixed(1) : '-'}
+                    </TableCell>
+                  </TableRow>
+                  {expanded[day] && (
+                    <>
+                      {daySessions.map((s) => (
+                        <TableRow key={s.id} sx={{ backgroundColor: getDayColor(idx) }}>
+                          <TableCell align="center">
+                            {formatUtc(s.startTime, 'yyyy-MM-dd')}
+                          </TableCell>
+                          <TableCell align="center">{formatUtc(s.startTime, 'HH:mm')}</TableCell>
+                          <TableCell align="center">{formatUtc(s.endTime, 'HH:mm')}</TableCell>
+                          <TableCell align="center">
+                            {getSessionLengthMinutes(s).toFixed(1)}
+                          </TableCell>
+                          <TableCell align="center">{s.rotations}</TableCell>
+                          <TableCell align="center">{s.distance.toFixed(2)}</TableCell>
+                          <TableCell align="center">{s.speed.toFixed(2)}</TableCell>
+                          <TableCell align="center">{s.temperature.toFixed(1)}</TableCell>
+                          <TableCell align="center">{s.humidity.toFixed(1)}</TableCell>
+                        </TableRow>
+                      ))}
+                      <TableRow
+                        key={day + '-avg'}
+                        sx={{ backgroundColor: darkenColor(getDayColor(idx), 0.85) }}
+                      >
+                        <TableCell colSpan={1} align="center">
+                          <b>Average</b>
+                        </TableCell>
+                        <TableCell align="center" />
+                        <TableCell align="center" />
+                        <TableCell align="center">
+                          <b>{avg?.sessionLength.toFixed(1)}</b>
+                        </TableCell>
+                        <TableCell align="center">
+                          <b>{avg?.rotations.toFixed(0)}</b>
+                        </TableCell>
+                        <TableCell align="center">
+                          <b>{avg?.distance.toFixed(2)}</b>
+                        </TableCell>
+                        <TableCell align="center">
+                          <b>{avg?.speed.toFixed(2)}</b>
+                        </TableCell>
+                        <TableCell align="center">
+                          <b>{avg?.temperature.toFixed(1)}</b>
+                        </TableCell>
+                        <TableCell align="center">
+                          <b>{avg?.humidity.toFixed(1)}</b>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow
+                        key={day + '-total'}
+                        sx={{ backgroundColor: darkenColor(getDayColor(idx), 0.7) }}
+                      >
+                        <TableCell colSpan={1} align="center">
+                          <b>Total</b>
+                        </TableCell>
+                        <TableCell align="center" />
+                        <TableCell align="center" />
+                        <TableCell align="center">
+                          <b>{totalRow?.sessionLength.toFixed(1)}</b>
+                        </TableCell>
+                        <TableCell align="center">
+                          <b>{totalRow?.rotations}</b>
+                        </TableCell>
+                        <TableCell align="center">
+                          <b>{totalRow?.distance.toFixed(2)}</b>
+                        </TableCell>
+                        <TableCell align="center">
+                          <b>-</b>
+                        </TableCell>
+                        <TableCell align="center">
+                          <b>-</b>
+                        </TableCell>
+                        <TableCell align="center">
+                          <b>-</b>
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  )}
+                </>
+              );
             })}
           </TableBody>
         </Table>
