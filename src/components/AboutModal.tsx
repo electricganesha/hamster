@@ -40,6 +40,12 @@ export const AboutModal = () => {
         onClose={handleClose}
         aria-labelledby="about-modal-title"
         aria-describedby="about-modal-description"
+        sx={{
+          '& .MuiBox-root': {
+            maxHeight: '90vh',
+            overflowY: 'auto',
+          },
+        }}
       >
         <Box sx={style}>
           <IconButton
@@ -51,10 +57,16 @@ export const AboutModal = () => {
             <CloseIcon />
           </IconButton>
 
-          <Typography id="about-modal-title" variant="h6" component="h2" gutterBottom>
+          <Typography
+            id="about-modal-title"
+            variant="h6"
+            component="h2"
+            gutterBottom
+            sx={{ fontSize: { xs: 14, sm: 18 } }}
+          >
             About This Project
           </Typography>
-          <Typography id="about-modal-description" sx={{ mt: 2 }}>
+          <Typography id="about-modal-description" sx={{ mt: 2, fontSize: { xs: 10, sm: 14 } }}>
             This dashboard is built to monitor and visualize the running activity of Mooey Maria
             Hazel the hamster.
             <br />
@@ -72,10 +84,12 @@ export const AboutModal = () => {
                 maxHeight: 360,
                 objectFit: 'cover',
                 borderRadius: 8,
+                maxWidth: '100%',
               }}
+              sizes="(max-width: 600px) 300px, 540px"
             />
           </Box>
-          <Typography id="about-modal-description-2" sx={{ mt: 2 }}>
+          <Typography id="about-modal-description-2" sx={{ mt: 2, fontSize: { xs: 10, sm: 14 } }}>
             The project started because Mooey was running so much every night that we got curious
             about how much distance she would actually cover!
             <br />
