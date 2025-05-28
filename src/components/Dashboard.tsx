@@ -4,32 +4,27 @@ import { useState, useEffect, useMemo } from 'react';
 import { Box, Typography, Paper, CircularProgress } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { parseISO, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 
 import { Filters } from './Filters';
 import { SessionsTable } from './SessionsTable';
 import { ProgressCharts } from './ProgressCharts';
-import {
-  aggregateSessionsByDay,
-  computeDistance,
-  computeSessionDerivedFields,
-} from '../utils/utils';
+import { aggregateSessionsByDay, filterSessions, getChartData } from '../utils/data';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../app/theme';
 import { AboutModal } from './AboutModal';
 import { AggregatedSession } from '@/app/types/session';
+import { computeSessionDerivedFields } from '@/utils/computation';
+import { getInitialDateRange } from '@/utils/date';
 
 const HamsterSessionsDashboard = () => {
-  const today = new Date();
   const [sessions, setSessions] = useState<AggregatedSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [distanceRange, setDistanceRange] = useState<[number, number]>([0, 1000]);
   const [tempRange, setTempRange] = useState<[number, number]>([0, 40]);
   const [humidityRange, setHumidityRange] = useState<[number, number]>([0, 100]);
-  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
-    startOfDay(today),
-    endOfDay(today),
-  ]);
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>(getInitialDateRange());
+  const [rotationRange, setRotationRange] = useState<[number, number]>([0, 5000]);
+  const [speedRange, setSpeedRange] = useState<[number, number]>([0, 20]);
 
   useEffect(() => {
     setLoading(true);
@@ -41,61 +36,21 @@ const HamsterSessionsDashboard = () => {
       });
   }, []);
 
-  const filtered = useMemo(() => {
-    return sessions.filter((s) => {
-      const dist = computeDistance(s.rotations);
-      const temp = s.temperature;
-      const hum = s.humidity;
-      const date = parseISO(s.startTime);
-      return (
-        dist >= distanceRange[0] &&
-        dist <= distanceRange[1] &&
-        temp >= tempRange[0] &&
-        temp <= tempRange[1] &&
-        hum >= humidityRange[0] &&
-        hum <= humidityRange[1] &&
-        (!dateRange[0] ||
-          !dateRange[1] ||
-          isWithinInterval(date, { start: dateRange[0], end: dateRange[1] }))
-      );
-    });
-  }, [sessions, distanceRange, tempRange, humidityRange, dateRange]);
+  const filtered = useMemo(
+    () =>
+      filterSessions(sessions, {
+        distanceRange,
+        tempRange,
+        humidityRange,
+        dateRange,
+        rotationRange,
+        speedRange,
+      }),
+    [sessions, distanceRange, tempRange, humidityRange, dateRange, rotationRange, speedRange],
+  );
 
   const byDay = useMemo(() => aggregateSessionsByDay(filtered), [filtered]);
-  const chartData = useMemo(() => {
-    const days = Object.keys(byDay).sort((a, b) => a.localeCompare(b));
-    return {
-      days,
-      distance: days.map((d) =>
-        byDay[d].reduce((sum: number, s: AggregatedSession) => sum + s.distance, 0),
-      ),
-      rotations: days.map((d) =>
-        byDay[d].reduce((sum: number, s: AggregatedSession) => sum + s.rotations, 0),
-      ),
-      speed: days.map((d) => {
-        const totalDistance = byDay[d].reduce(
-          (sum: number, s: AggregatedSession) => sum + s.distance,
-          0,
-        );
-        const totalDuration = byDay[d].reduce((sum: number, s: AggregatedSession) => {
-          const start = new Date(s.startTime).getTime() / 1000;
-          const end = new Date(s.endTime).getTime() / 1000;
-          return sum + Math.max(0, end - start);
-        }, 0);
-        return totalDuration > 0 ? totalDistance / totalDuration : 0;
-      }),
-      avgTemp: days.map(
-        (d) =>
-          byDay[d].reduce((sum: number, s: AggregatedSession) => sum + s.temperature, 0) /
-          byDay[d].length,
-      ),
-      avgHumidity: days.map(
-        (d) =>
-          byDay[d].reduce((sum: number, s: AggregatedSession) => sum + s.humidity, 0) /
-          byDay[d].length,
-      ),
-    };
-  }, [byDay]);
+  const chartData = useMemo(() => getChartData(byDay), [byDay]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -115,6 +70,10 @@ const HamsterSessionsDashboard = () => {
               setHumidityRange={setHumidityRange}
               dateRange={dateRange}
               setDateRange={setDateRange}
+              rotationRange={rotationRange}
+              setRotationRange={setRotationRange}
+              speedRange={speedRange}
+              setSpeedRange={setSpeedRange}
             />
           </Paper>
           {loading ? (

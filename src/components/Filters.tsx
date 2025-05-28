@@ -10,6 +10,10 @@ interface FiltersProps {
   setHumidityRange: (v: [number, number]) => void;
   dateRange: [Date | null, Date | null];
   setDateRange: (v: [Date | null, Date | null]) => void;
+  rotationRange: [number, number];
+  setRotationRange: (v: [number, number]) => void;
+  speedRange: [number, number];
+  setSpeedRange: (v: [number, number]) => void;
 }
 
 export const Filters = ({
@@ -21,6 +25,10 @@ export const Filters = ({
   setHumidityRange,
   dateRange,
   setDateRange,
+  rotationRange,
+  setRotationRange,
+  speedRange,
+  setSpeedRange,
 }: FiltersProps) => {
   return (
     <Grid container spacing={{ xs: 2, sm: 4 }} sx={{ padding: { xs: '2px 4px', sm: '2px 24px' } }}>
@@ -28,12 +36,43 @@ export const Filters = ({
         spacing={{ xs: 12, sm: 6, md: 3 }}
         sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
       >
-        <Typography gutterBottom>Distance (m)</Typography>
+        <Typography gutterBottom>Distance (km)</Typography>
         <Slider
           value={distanceRange}
           onChange={(_, v) => setDistanceRange(v as [number, number])}
           min={0}
-          max={1000}
+          max={6}
+          step={0.1}
+          valueLabelDisplay="auto"
+          size="small"
+        />
+      </Grid>
+      <Grid
+        spacing={{ xs: 12, sm: 6, md: 3 }}
+        sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+      >
+        <Typography gutterBottom>Rotations</Typography>
+        <Slider
+          value={rotationRange}
+          onChange={(_, v) => setRotationRange(v as [number, number])}
+          min={0}
+          max={5000}
+          step={100}
+          valueLabelDisplay="auto"
+          size="small"
+        />
+      </Grid>
+      <Grid
+        spacing={{ xs: 12, sm: 6, md: 3 }}
+        sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+      >
+        <Typography gutterBottom>Speed (km/h)</Typography>
+        <Slider
+          value={speedRange}
+          onChange={(_, v) => setSpeedRange(v as [number, number])}
+          min={0}
+          max={5}
+          step={0.1}
           valueLabelDisplay="auto"
           size="small"
         />

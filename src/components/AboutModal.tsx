@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Modal, Box, Typography, IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import CloseIcon from '@mui/icons-material/Close';
-import { WHEEL_DIAMETER_M } from '../utils/utils';
+import { WHEEL_DIAMETER_M } from '@/utils/computation';
+import Image from 'next/image';
 
 const style = {
   position: 'absolute' as const,
@@ -58,19 +59,23 @@ export const AboutModal = () => {
             Hazel the hamster.
             <br />
             <br />
-            <Box sx={{ width: '100%', mb: 2 }}>
-              <img
-                src="/images/mooey.jpg"
-                alt="Mooey Maria Hazel"
-                style={{
-                  width: '100%',
-                  height: 'auto',
-                  maxHeight: 200,
-                  objectFit: 'cover',
-                  borderRadius: 8,
-                }}
-              />
-            </Box>
+          </Typography>
+          <Box sx={{ width: '100%', mb: 2 }}>
+            <Image
+              src="/images/mooey.jpg"
+              alt="Mooey Maria Hazel"
+              width={540}
+              height={360}
+              style={{
+                width: '100%',
+                height: 'auto',
+                maxHeight: 360,
+                objectFit: 'cover',
+                borderRadius: 8,
+              }}
+            />
+          </Box>
+          <Typography id="about-modal-description-2" sx={{ mt: 2 }}>
             The project started because Mooey was running so much every night that we got curious
             about how much distance she would actually cover!
             <br />

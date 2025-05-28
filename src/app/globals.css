@@ -1,6 +1,13 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  padding: 24px;
+
+  @media only screen and (min-width: 728px) {
+    padding: 24px 64px;
+    max-width: 1960px;
+    margin: auto;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -19,7 +26,7 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-quicksand-sans), 'Quicksand', Arial, sans-serif;
+  font-family: var(--font-quicksand-sans), "Quicksand", Arial, sans-serif;
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
