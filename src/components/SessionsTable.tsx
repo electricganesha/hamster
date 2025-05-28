@@ -190,7 +190,10 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
               <IconButton size="small" onClick={() => toggleDay(day)}>
                 {expanded[day] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </IconButton>
-              <Typography variant="subtitle1" sx={{ ml: 1 }}>
+              <Typography variant="subtitle1" sx={{ ml: 1, mr: 2 }}>
+                {day}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
                 {day}
               </Typography>
             </Box>

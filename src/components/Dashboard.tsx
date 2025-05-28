@@ -57,7 +57,12 @@ const HamsterSessionsDashboard = () => {
       <ThemeProvider theme={theme}>
         <Box p={{ xs: 1, sm: 2 }} position="relative">
           <AboutModal />
-          <Typography variant="h4" gutterBottom fontSize={{ xs: 22, sm: 28 }}>
+          <Typography
+            variant="h4"
+            gutterBottom
+            fontSize={{ xs: 22, sm: 28 }}
+            sx={{ width: { xs: '80%' } }}
+          >
             🐹 Mooey Maria Hazel 🐹 Monitoring Dashboard
           </Typography>
           <Paper sx={{ p: { xs: 1, sm: 2 }, mb: 2 }}>
