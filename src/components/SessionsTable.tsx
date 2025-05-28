@@ -69,15 +69,15 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Date</TableCell>
-              <TableCell>Start</TableCell>
-              <TableCell>End</TableCell>
-              <TableCell>Session Length (min)</TableCell>
-              <TableCell>Rotations</TableCell>
-              <TableCell>Distance (km)</TableCell>
-              <TableCell>Speed (km/h)</TableCell>
-              <TableCell>Avg Temp (°C)</TableCell>
-              <TableCell>Avg Humidity (%)</TableCell>
+              <TableCell align="center">Date</TableCell>
+              <TableCell align="center">Start</TableCell>
+              <TableCell align="center">End</TableCell>
+              <TableCell align="center">Session Length (min)</TableCell>
+              <TableCell align="center">Rotations</TableCell>
+              <TableCell align="center">Distance (km)</TableCell>
+              <TableCell align="center">Speed (km/h)</TableCell>
+              <TableCell align="center">Avg Temp (°C)</TableCell>
+              <TableCell align="center">Avg Humidity (%)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -225,9 +225,7 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
                     <>
                       {daySessions.map((s) => (
                         <TableRow key={s.id} sx={{ backgroundColor: getDayColor(idx) }}>
-                          <TableCell align="center">
-                            {formatUtc(s.startTime, 'yyyy-MM-dd')}
-                          </TableCell>
+                          <TableCell align="left">{formatUtc(s.startTime, 'yyyy-MM-dd')}</TableCell>
                           <TableCell align="center">{formatUtc(s.startTime, 'HH:mm')}</TableCell>
                           <TableCell align="center">{formatUtc(s.endTime, 'HH:mm')}</TableCell>
                           <TableCell align="center">
@@ -244,7 +242,7 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
                         key={day + '-avg'}
                         sx={{ backgroundColor: darkenColor(getDayColor(idx), 0.85) }}
                       >
-                        <TableCell colSpan={1} align="center">
+                        <TableCell colSpan={1} align="left">
                           <b>Average</b>
                         </TableCell>
                         <TableCell align="center" />
@@ -272,7 +270,7 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
                         key={day + '-total'}
                         sx={{ backgroundColor: darkenColor(getDayColor(idx), 0.7) }}
                       >
-                        <TableCell colSpan={1} align="center">
+                        <TableCell colSpan={1} align="left">
                           <b>Total</b>
                         </TableCell>
                         <TableCell align="center" />
