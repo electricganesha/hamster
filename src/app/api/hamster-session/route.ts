@@ -15,8 +15,8 @@ export const POST = async (req: NextRequest) => {
         rotationLog: {
           create: (data.rotationLog ?? []).map((entry: Entry) => ({
             timestamp: entry.timestamp,
-            temperature: entry.temperature,
-            humidity: entry.humidity,
+            temperature: entry.temperature ?? 0,
+            humidity: entry.humidity ?? 0,
           })),
         },
       },

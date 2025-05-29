@@ -87,12 +87,10 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
               const totalRow = getSessionTotals(daySessions);
               return (
                 <>
-                  {/* Group header row with always-visible averages */}
                   <TableRow
                     key={day + '-header'}
                     sx={{ backgroundColor: getDayColor(idx), height: 48 }}
                   >
-                    {/* Date cell: collapse icon and day label */}
                     <TableCell
                       align="left"
                       sx={{
@@ -115,7 +113,6 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
                         <span style={{ fontWeight: 600 }}>{day}</span>
                       </Box>
                     </TableCell>
-                    {/* Show averages for each column in the header row, align center, match th style */}
                     <TableCell
                       align="center"
                       sx={{
@@ -127,7 +124,7 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
                         verticalAlign: 'middle',
                       }}
                     >
-                      {avg ? formatUtc(daySessions[0]?.startTime, 'HH:mm') : '-'}
+                      {daySessions.length ? formatUtc(daySessions[0]?.startTime, 'HH:mm') : '-'}
                     </TableCell>
                     <TableCell
                       align="center"
@@ -140,7 +137,9 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
                         verticalAlign: 'middle',
                       }}
                     >
-                      {avg ? formatUtc(daySessions[daySessions.length - 1]?.endTime, 'HH:mm') : '-'}
+                      {daySessions.length
+                        ? formatUtc(daySessions[daySessions.length - 1]?.endTime, 'HH:mm')
+                        : '-'}
                     </TableCell>
                     <TableCell
                       align="center"
@@ -153,7 +152,7 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
                         verticalAlign: 'middle',
                       }}
                     >
-                      {avg ? avg.sessionLength.toFixed(1) : '-'}
+                      {totalRow ? totalRow.sessionLength.toFixed(1) : '-'}
                     </TableCell>
                     <TableCell
                       align="center"
@@ -166,7 +165,7 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
                         verticalAlign: 'middle',
                       }}
                     >
-                      {avg ? avg.rotations.toFixed(0) : '-'}
+                      {totalRow ? totalRow.rotations : '-'}
                     </TableCell>
                     <TableCell
                       align="center"
@@ -179,7 +178,7 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
                         verticalAlign: 'middle',
                       }}
                     >
-                      {avg ? avg.distance.toFixed(2) : '-'}
+                      {totalRow ? totalRow.distance.toFixed(2) : '-'}
                     </TableCell>
                     <TableCell
                       align="center"
