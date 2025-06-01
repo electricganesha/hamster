@@ -54,6 +54,10 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
   );
   const toggleDay = (day: string) => setExpanded((prev) => ({ ...prev, [day]: !prev[day] }));
 
+  if (sessions.length === 0) {
+    return null;
+  }
+
   if (!isMobile) {
     return (
       <TableContainer
