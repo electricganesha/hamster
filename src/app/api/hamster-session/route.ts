@@ -6,6 +6,12 @@ import { Prisma } from '@/generated/prisma';
 import { Entry } from '@/app/types/entry';
 
 export const POST = async (req: NextRequest) => {
+  const authHeader = req.headers.get('authorization');
+  const token = process.env.API_SECRET_TOKEN;
+  if (!authHeader || authHeader !== `Bearer ${token}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const data = await req.json();
     const session = await prisma.hamsterSession.create({
