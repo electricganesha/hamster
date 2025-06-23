@@ -1,5 +1,5 @@
 import { AggregatedSession } from '@/app/types/session';
-import { format, isWithinInterval, parseISO, subHours } from 'date-fns';
+import { format, isWithinInterval, parseISO } from 'date-fns';
 import { computeDistance } from './computation';
 
 export const aggregateSessionsByDay = (
@@ -7,8 +7,18 @@ export const aggregateSessionsByDay = (
 ): { [day: string]: AggregatedSession[] } => {
   const byDay: { [day: string]: AggregatedSession[] } = {};
   sessions.forEach((s) => {
-    // Subtract 12 hours from startTime to group by noon-to-noon day
-    const noonDay = format(subHours(parseISO(s.startTime), 12), 'yyyy-MM-dd');
+    const date = parseISO(s.startTime);
+    let groupDay: Date;
+    if (date.getUTCHours() < 12) {
+      // Before noon, group under previous day
+      groupDay = new Date(
+        Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() - 1),
+      );
+    } else {
+      // Noon or later, group under current day
+      groupDay = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+    }
+    const noonDay = format(groupDay, 'yyyy-MM-dd');
     if (!byDay[noonDay]) byDay[noonDay] = [];
     byDay[noonDay].push(s);
   });
