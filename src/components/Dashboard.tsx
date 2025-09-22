@@ -29,13 +29,26 @@ const HamsterSessionsDashboard = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch('/api/hamster-session?page=1&pageSize=1000')
+    const params = new URLSearchParams({
+      page: '1',
+      pageSize: '10000', // Increased to handle larger datasets
+    });
+
+    // Add date filters if they exist
+    if (dateRange[0]) {
+      params.append('startDate', dateRange[0].toISOString());
+    }
+    if (dateRange[1]) {
+      params.append('endDate', dateRange[1].toISOString());
+    }
+
+    fetch(`/api/hamster-session?${params.toString()}`)
       .then((res) => res.json())
       .then((data) => {
         setSessions(data.map(computeSessionDerivedFields));
         setLoading(false);
       });
-  }, []);
+  }, [dateRange]); // Re-fetch when date range changes
 
   const filtered = useMemo(
     () =>

@@ -48,8 +48,15 @@ export const GET = async (req: NextRequest) => {
     const where: Prisma.HamsterSessionWhereInput = {};
     if (startDate || endDate) {
       where.createdAt = {};
-      if (startDate) where.createdAt.gte = new Date(startDate);
-      if (endDate) where.createdAt.lte = new Date(endDate);
+      if (startDate) {
+        where.createdAt.gte = new Date(startDate);
+      }
+      if (endDate) {
+        // Set end date to end of day to include the entire day
+        const endDateTime = new Date(endDate);
+        endDateTime.setHours(23, 59, 59, 999);
+        where.createdAt.lte = endDateTime;
+      }
     }
 
     const sessions = await prisma.hamsterSession.findMany({
