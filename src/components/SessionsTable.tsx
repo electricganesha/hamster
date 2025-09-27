@@ -36,7 +36,7 @@ export const SessionsTable = ({ sessions }: Readonly<{ sessions: AggregatedSessi
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   // Group sessions by day (noon-to-noon)
   const byDay = aggregateSessionsByDay(sessions);
-  const dayKeys = Object.keys(byDay).sort();
+  const dayKeys = Object.keys(byDay).sort().reverse(); // Reverse to show newest first
 
   // Find today's noon-to-noon day key
   const now = new Date();
